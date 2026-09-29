@@ -1,0 +1,206 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>RimWorld English V2</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RimEnglish">
+<style>
+:root{--bg:#0e0f11;--panel:#17181c;--panel2:#22242a;--line:#333741;--text:#f6f7fb;--muted:#a3a8b3;--green:#18311e;--red:#311a1e}
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{display:flex;justify-content:center}.app{width:min(100%,760px);min-height:100vh;padding:16px 14px 28px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}.brand{font-size:22px;font-weight:800}.sub{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4}
+.controls{display:flex;gap:8px;flex-wrap:wrap}button{border:1px solid var(--line);background:#181a1f;color:var(--text);padding:10px 12px;border-radius:14px;font-size:14px;cursor:pointer}button:active{transform:scale(.98)}
+.topbar{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted);margin:6px 4px 8px}.bar{height:7px;background:#1b1d22;border-radius:999px;overflow:hidden;margin-bottom:12px}.bar>div{height:100%;width:0;background:#eceff6;transition:width .25s}
+.scene-card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));border-radius:28px;padding:16px 16px 20px;box-shadow:0 18px 38px rgba(0,0,0,.28)}.scene-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.mode-tag{font-size:12px;padding:5px 10px;border-radius:999px;background:#101218;border:1px solid var(--line);color:#c5d0e0}.scene-prompt{color:#cfd5df;font-size:15px;margin:4px 0 12px;line-height:1.45;min-height:44px}
+.scene{position:relative;height:250px;background:#0d1014;border:1px solid #2d313a;border-radius:24px;overflow:hidden}.ground{position:absolute;left:0;right:0;bottom:28px;height:2px;background:#2b3340}
+.tile{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:18px;border:1px solid #404756;background:#151922;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.18)}.actor{width:56px;height:56px;font-size:28px}
+.label{font-size:12px;color:#d6dbe5;position:absolute;left:50%;transform:translateX(-50%);top:61px;white-space:nowrap}.object{min-width:74px;height:50px;padding:0 12px;font-size:24px}.smallobj{width:54px;height:54px;font-size:22px}
+.blueprint{border-style:dashed;background:rgba(79,143,255,.10);color:#95c7ff}.damaged{box-shadow:0 0 0 2px rgba(255,86,86,.18) inset}.prison{width:88px;height:76px;border-radius:18px;background:#13161d}.bed{width:88px;height:58px}.table{width:90px;height:54px}.desk{width:96px;height:60px}
+.crop{position:absolute;width:42px;height:62px;border-radius:20px;background:#19301c;border:1px solid #37553d;display:flex;align-items:center;justify-content:center}.crop::before{content:"🌾";font-size:26px}
+.hidden{display:none !important}.answer{margin-top:14px;padding:14px;border-radius:18px;border:1px solid var(--line);background:#111319}.answer .word{font-size:30px;font-weight:800;letter-spacing:-.5px}.answer .meaning{margin-top:8px;font-size:18px;line-height:1.45}.answer .example{margin-top:10px;color:#cfd5df;font-size:15px}.zh{margin-top:12px;padding:10px 12px;border-radius:12px;background:#171a20;color:#e2e6ef;display:none}.zh.show{display:block}
+.action-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin-top:12px}.action-row button{padding:14px 16px;font-size:20px;border-radius:16px}.bad{background:var(--red)}.good{background:var(--green)}.util-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.stats{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:18px;background:#12141a;color:#d3d8e1;line-height:1.7;font-size:14px}.note{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.5}.spark{position:absolute;font-size:24px;opacity:0}.float{position:absolute;font-size:18px;opacity:0}
+@media (max-width:560px){.scene{height:220px}.brand{font-size:20px}.answer .word{font-size:28px}.util-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div><div class="brand">RimWorld English V2</div><div class="sub">Animated Learning Mode • Watch the action first, then reveal the word.</div></div>
+<div class="controls"><button id="shuffleBtn">Shuffle</button><button id="missedBtn">Review missed</button><button id="resetBtn">Reset</button></div>
+</header>
+<div class="topbar"><span id="counter">1/20</span><span id="score">✓ 0　✕ 0</span></div>
+<div class="bar"><div id="barFill"></div></div>
+<div class="scene-card">
+<div class="scene-head"><div class="mode-tag">Animated Learning Mode</div><button id="playBtn">▶ Play animation</button></div>
+<div class="scene-prompt" id="prompt"></div>
+<div class="scene" id="scene"><div class="ground"></div></div>
+<div class="util-row"><button id="showAnswerBtn">Show answer</button><button id="speakBtn">🔊 Speak</button><button id="hintBtn">Show Chinese</button></div>
+<div class="answer hidden" id="answer"><div class="word" id="word"></div><div class="meaning" id="meaning"></div><div class="example" id="example"></div><div class="zh" id="zh"></div></div>
+<div class="action-row"><button class="bad" id="badBtn">✕</button><button id="nextBtn">Next</button><button class="good" id="goodBtn">✓</button></div>
+</div>
+<div class="stats" id="stats"></div>
+<div class="note">Tip: first watch the animation, guess the action in English, then tap <b>Show answer</b>. Your progress is saved on this device.</div>
+</div>
+<script>
+const CARDS = [{"id": "haul", "word": "haul", "zh": "搬运", "meaning": "carry an item from one place to another, usually to storage", "example": "Haul the steel.", "prompt": "Watch the pawn move an item to storage."}, {"id": "butcher", "word": "butcher", "zh": "屠宰 / 分解动物尸体", "meaning": "cut a dead animal into meat and leather", "example": "Butcher the deer.", "prompt": "Watch the animal become meat and leather."}, {"id": "tend", "word": "tend", "zh": "医治 / 包扎", "meaning": "give medical care to a sick or injured pawn", "example": "Tend the injured pawn.", "prompt": "Watch the doctor help the injured pawn."}, {"id": "construct", "word": "construct", "zh": "建造", "meaning": "build something", "example": "Construct a new wall.", "prompt": "Watch a blueprint turn into a wall."}, {"id": "deconstruct", "word": "deconstruct", "zh": "拆除", "meaning": "take a building apart and recover materials", "example": "Deconstruct this wall.", "prompt": "Watch a wall break down into materials."}, {"id": "repair", "word": "repair", "zh": "修理", "meaning": "fix something that is damaged", "example": "Repair the damaged turret.", "prompt": "Watch the damaged thing become fixed again."}, {"id": "harvest", "word": "harvest", "zh": "收获", "meaning": "collect a mature crop", "example": "Harvest the rice.", "prompt": "Watch a pawn collect a ripe crop."}, {"id": "tame", "word": "tame", "zh": "驯服", "meaning": "make a wild animal accept humans", "example": "Try to tame the muffalo.", "prompt": "Watch a wild animal become friendly."}, {"id": "train", "word": "train", "zh": "训练", "meaning": "teach an animal to do specific things", "example": "Train the dog to haul.", "prompt": "Watch a pawn teach an animal."}, {"id": "rescue", "word": "rescue", "zh": "救援", "meaning": "carry an injured pawn to a safe bed", "example": "Rescue the downed colonist.", "prompt": "Watch an injured pawn get carried to bed."}, {"id": "capture", "word": "capture", "zh": "俘虏", "meaning": "take an enemy and make them a prisoner", "example": "Capture the wounded raider.", "prompt": "Watch the raider get taken into a prison cell."}, {"id": "recruit", "word": "recruit", "zh": "招募", "meaning": "convince a prisoner to join your colony", "example": "Try to recruit the prisoner.", "prompt": "Watch a prisoner become a colonist."}, {"id": "draft", "word": "draft", "zh": "征召 / 战斗控制", "meaning": "take direct control of a pawn for combat", "example": "Draft the pawn.", "prompt": "Watch a normal pawn switch into combat control."}, {"id": "undraft", "word": "undraft", "zh": "解除征召", "meaning": "stop direct combat control", "example": "Undraft the pawn.", "prompt": "Watch the pawn leave combat control and relax."}, {"id": "equip", "word": "equip", "zh": "装备", "meaning": "give a pawn a weapon or item to use", "example": "Equip the rifle.", "prompt": "Watch the pawn receive a weapon."}, {"id": "cook", "word": "cook", "zh": "烹饪", "meaning": "prepare food using heat", "example": "Cook some meals.", "prompt": "Watch raw food become a cooked meal."}, {"id": "clean", "word": "clean", "zh": "清洁", "meaning": "remove dirt, blood, or mess", "example": "Clean the room.", "prompt": "Watch the dirt get swept away."}, {"id": "research", "word": "research", "zh": "研究", "meaning": "work that unlocks new technology", "example": "Start a new research project.", "prompt": "Watch a pawn study and discover something new."}, {"id": "sleep", "word": "sleep", "zh": "睡觉", "meaning": "rest in bed to recover energy", "example": "The pawn is sleeping.", "prompt": "Watch the pawn go to bed and sleep."}, {"id": "eat", "word": "eat", "zh": "吃", "meaning": "consume food or a meal", "example": "The pawn ate a meal.", "prompt": "Watch the pawn sit down and eat."}];
+const KEY = "rimworld_english_v2_progress";
+let state = JSON.parse(localStorage.getItem(KEY) || "{}");
+if(!state.order) state.order = CARDS.map((_,i)=>i);
+if(!state.results) state.results = {};
+if(typeof state.pos !== "number") state.pos = 0;
+let order = state.order.slice();
+let pos = Math.min(state.pos, Math.max(0, order.length-1));
+let currentAnimations = [];
+const $ = id => document.getElementById(id);
+const scene = $("scene");
+function save(){state.order=order;state.pos=pos;localStorage.setItem(KEY, JSON.stringify(state));}
+function currentIndex(){return order[pos]} function current(){return CARDS[currentIndex()]}
+function clearScene(){currentAnimations.forEach(a=>{try{a.cancel()}catch(e){}});currentAnimations=[];scene.innerHTML='<div class="ground"></div>';}
+function add(el){scene.appendChild(el);return el;}
+function tile(cls,text,left,top,extra=''){const d=document.createElement('div');d.className=`tile ${cls} ${extra}`;d.style.left=left+'px';d.style.top=top+'px';d.textContent=text;return add(d);}
+function label(text,left,top){const d=document.createElement('div');d.className='label';d.style.left=left+'px';d.style.top=top+'px';d.textContent=text;return add(d);}
+function spark(text,left,top){const d=document.createElement('div');d.className='spark';d.style.left=left+'px';d.style.top=top+'px';d.textContent=text;return add(d);}
+function floatText(text,left,top){const d=document.createElement('div');d.className='float';d.style.left=left+'px';d.style.top=top+'px';d.textContent=text;return add(d);}
+function anim(el,frames,opt){const a=el.animate(frames,opt);currentAnimations.push(a);return a;}
+
+function playScene(id){
+  clearScene();
+  const W=scene.clientWidth,H=scene.clientHeight,y=H-90,leftA=34,center=Math.round(W/2)-25,right=W-120;
+  if(id==='haul'){
+    const pawn=tile('actor','🧍',leftA,y), steel=tile('object','🔩',center,y+6), store=tile('object','📦',right,y+6);
+    label('steel',center+37,y+58); label('storage',right+37,y+58);
+    anim(pawn,[{transform:'translateX(0px)'},{transform:`translateX(${center-leftA}px)`},{transform:`translateX(${right-leftA-10}px)`}],{duration:3200,easing:'ease-in-out'});
+    anim(steel,[{transform:'translateX(0px)',opacity:1},{transform:'translateX(0px)',opacity:1,offset:.35},{transform:`translateX(${right-center-6}px)`,opacity:1}],{duration:3200,easing:'ease-in-out'});
+  } else if(id==='butcher'){
+    const pawn=tile('actor','🧍',70,y), table=tile('table object','🪵',170,y+8), animal=tile('smallobj','🦌',190,y-12), knife=tile('smallobj hidden','🔪',130,y-6), meat=tile('smallobj hidden','🥩',300,y-8), leather=tile('smallobj hidden','🧥',352,y-8);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(70px)'}],{duration:900,fill:'forwards'});
+    setTimeout(()=>knife.classList.remove('hidden'),900);
+    setTimeout(()=>anim(knife,[{opacity:0,transform:'translateX(0)'},{opacity:1,transform:'translateX(52px)'},{opacity:0,transform:'translateX(68px)'}],{duration:900}),950);
+    setTimeout(()=>animal.style.opacity='0',1500);
+    setTimeout(()=>{meat.classList.remove('hidden'); leather.classList.remove('hidden');},1550);
+    setTimeout(()=>{anim(meat,[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,fill:'forwards'}); anim(leather,[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,fill:'forwards'});},1600);
+  } else if(id==='tend'){
+    const doctor=tile('actor','🧑‍⚕️',62,y), patient=tile('actor','🤕',250,y), plus=spark('💚',265,y-30);
+    anim(doctor,[{transform:'translateX(0)'},{transform:'translateX(150px)'}],{duration:1200,fill:'forwards'});
+    setTimeout(()=>anim(plus,[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(-10px)'},{opacity:0,transform:'translateY(-28px)'}],{duration:1000}),1200);
+  } else if(id==='construct'){
+    const pawn=tile('actor','🧍',60,y), bp=tile('object blueprint','⬚',250,y+8); label('blueprint',287,y+58);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(145px)'}],{duration:1000,fill:'forwards'});
+    setTimeout(()=>anim(bp,[{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(1.06)'}],{duration:900,fill:'forwards'}),1150);
+    setTimeout(()=>{const wall=tile('object','🧱',250,y+8); label('wall',287,y+58); anim(wall,[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,fill:'forwards'});},1800);
+  } else if(id==='deconstruct'){
+    const pawn=tile('actor','🧍',75,y), wall=tile('object','🧱',255,y+8);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(140px)'}],{duration:1000,fill:'forwards'});
+    setTimeout(()=>anim(wall,[{transform:'scale(1)',opacity:1},{transform:'scale(.7)',opacity:.2}],{duration:900,fill:'forwards'}),1100);
+    setTimeout(()=>{wall.style.display='none'; const m1=tile('smallobj','🧱',240,y+10), m2=tile('smallobj','🧱',300,y+10); anim(m1,[{opacity:0,transform:'translateY(-10px)'},{opacity:1,transform:'translateY(0)'}],{duration:350,fill:'forwards'}); anim(m2,[{opacity:0,transform:'translateY(-10px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,fill:'forwards'});},2050);
+  } else if(id==='repair'){
+    const pawn=tile('actor','🧍',70,y), turret=tile('object damaged','🤖',255,y+8), wrench=spark('🔧',240,y-14), heart=spark('✨',260,y-34);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(145px)'}],{duration:1100,fill:'forwards'});
+    setTimeout(()=>anim(wrench,[{opacity:0},{opacity:1,transform:'translateY(-5px)'},{opacity:0,transform:'translateY(-15px)'}],{duration:800}),1100);
+    setTimeout(()=>{turret.classList.remove('damaged'); anim(heart,[{opacity:0},{opacity:1},{opacity:0,transform:'translateY(-18px)'}],{duration:900});},1700);
+  } else if(id==='harvest'){
+    const pawn=tile('actor','🧍',60,y), crop=document.createElement('div'); crop.className='crop'; crop.style.left='258px'; crop.style.top=(y-6)+'px'; add(crop);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(155px)'}],{duration:1200,fill:'forwards'});
+    setTimeout(()=>anim(crop,[{opacity:1,transform:'scale(1)'},{opacity:.2,transform:'scale(.7)'}],{duration:800,fill:'forwards'}),1300);
+    setTimeout(()=>{const item=tile('smallobj','🌾',320,y+4); anim(item,[{opacity:0,transform:'translateY(-10px)'},{opacity:1,transform:'translateY(0)'}],{duration:450,fill:'forwards'})},2100);
+  } else if(id==='tame'){
+    const pawn=tile('actor','🧍',80,y), animal=tile('actor','🐺',255,y), heart=spark('💚',245,y-28);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(130px)'}],{duration:1100,fill:'forwards'});
+    setTimeout(()=>anim(heart,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1.1)'},{opacity:0,transform:'translateY(-20px)'}],{duration:1100}),1200);
+    setTimeout(()=>animal.textContent='🐶',1400);
+  } else if(id==='train'){
+    const pawn=tile('actor','🧍',95,y), dog=tile('actor','🐶',250,y), star=spark('⭐',260,y-28), arrow=floatText('sit • haul • obey',180,y-58);
+    anim(arrow,[{opacity:0},{opacity:1},{opacity:0}],{duration:2600});
+    setTimeout(()=>anim(star,[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(-8px)'},{opacity:0,transform:'translateY(-20px)'}],{duration:1000}),1200);
+  } else if(id==='rescue'){
+    const rescuer=tile('actor','🧍',55,y), downed=tile('actor','🤕',225,y+12), bed=tile('bed object','🛏️',W-125,y+4); label('bed',W-80,y+58);
+    anim(rescuer,[{transform:'translateX(0)'},{transform:'translateX(150px)'},{transform:`translateX(${W-200}px)`}],{duration:3200,easing:'ease-in-out',fill:'forwards'});
+    anim(downed,[{transform:'translateX(0)',opacity:1},{transform:'translateX(0)',opacity:1,offset:.4},{transform:`translateX(${W-350}px) translateY(-18px)`,opacity:1}],{duration:3200,easing:'ease-in-out',fill:'forwards'});
+  } else if(id==='capture'){
+    const colonist=tile('actor','🧍',60,y), raider=tile('actor','🔴',220,y), prison=tile('prison tile','🚪',W-135,y-8); label('cell',W-92,y+74);
+    anim(colonist,[{transform:'translateX(0)'},{transform:'translateX(115px)'},{transform:`translateX(${W-220}px)`}],{duration:2800,fill:'forwards'});
+    anim(raider,[{transform:'translateX(0)'},{transform:'translateX(0)',offset:.35},{transform:`translateX(${W-300}px)`}],{duration:2800,fill:'forwards'});
+    setTimeout(()=>raider.textContent='🔒',1900);
+  } else if(id==='recruit'){
+    const prison=tile('prison tile','🔒',90,y-8), prisoner=tile('actor','🧍',102,y+8), colonist=tile('actor hidden','🧍',W-125,y), home=tile('object','🏠',W-135,y+8); label('colony',W-98,y+58);
+    const bubble=floatText('join us',190,y-58); anim(bubble,[{opacity:0},{opacity:1},{opacity:1},{opacity:0}],{duration:2600});
+    setTimeout(()=>{prisoner.style.opacity='0'; colonist.classList.remove('hidden'); anim(colonist,[{opacity:0,transform:'translateX(-120px)'},{opacity:1,transform:'translateX(0)'}],{duration:1400,fill:'forwards'})},1400);
+  } else if(id==='draft'){
+    const pawn=tile('actor','🧍',150,y), cross=spark('🎯',160,y-42), dest=tile('smallobj','📍',W-120,y+4);
+    anim(cross,[{opacity:0,transform:'scale(.4)'},{opacity:1,transform:'scale(1)'},{opacity:1}],{duration:900,fill:'forwards'});
+    setTimeout(()=>anim(pawn,[{transform:'translateX(0)'},{transform:`translateX(${W-270}px)`}],{duration:1300,fill:'forwards'}),900);
+  } else if(id==='undraft'){
+    const pawn=tile('actor','🧍',160,y), cross=spark('🎯',172,y-42); cross.style.opacity='1'; const bubble=floatText('relax',190,y-62);
+    setTimeout(()=>anim(cross,[{opacity:1},{opacity:0,transform:'scale(.5)'}],{duration:700,fill:'forwards'}),600);
+    setTimeout(()=>anim(bubble,[{opacity:0},{opacity:1},{opacity:1},{opacity:0}],{duration:1800}),1100);
+  } else if(id==='equip'){
+    const pawn=tile('actor','🧍',120,y), rifle=tile('smallobj','🔫',300,y+4);
+    anim(rifle,[{transform:'translateX(0)'},{transform:'translateX(-125px)'}],{duration:1200,fill:'forwards'});
+    setTimeout(()=>anim(pawn,[{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:500}),1200);
+  } else if(id==='cook'){
+    const pawn=tile('actor','🧍',65,y), raw=tile('smallobj','🥔',170,y+4), stove=tile('object','🍳',260,y+8), meal=tile('smallobj hidden','🥘',W-118,y+4);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(105px)'}],{duration:900,fill:'forwards'});
+    anim(raw,[{transform:'translateX(0)'},{transform:'translateX(95px)'}],{duration:1200,fill:'forwards'});
+    setTimeout(()=>anim(stove,[{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:800}),1200);
+    setTimeout(()=>{meal.classList.remove('hidden'); anim(meal,[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'translateY(0)'}],{duration:500,fill:'forwards'})},1900);
+  } else if(id==='clean'){
+    const pawn=tile('actor','🧍',70,y), dirt1=spark('🟤',220,y+10), dirt2=spark('🩸',280,y+10), broom=spark('🧹',130,y-4); dirt1.style.opacity='1'; dirt2.style.opacity='1';
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(120px)'}],{duration:1100,fill:'forwards'});
+    setTimeout(()=>anim(broom,[{opacity:0},{opacity:1},{opacity:0}],{duration:900}),1100);
+    setTimeout(()=>anim(dirt1,[{opacity:1},{opacity:0}],{duration:500,fill:'forwards'}),1450);
+    setTimeout(()=>anim(dirt2,[{opacity:1},{opacity:0}],{duration:700,fill:'forwards'}),1650);
+  } else if(id==='research'){
+    const pawn=tile('actor','🧍',82,y), desk=tile('desk object','📚',240,y+2), bulb=spark('💡',272,y-34);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(130px)'}],{duration:1000,fill:'forwards'});
+    setTimeout(()=>anim(bulb,[{opacity:0,transform:'scale(.7)'},{opacity:1,transform:'scale(1.1)'},{opacity:0,transform:'translateY(-18px)'}],{duration:1300}),1300);
+  } else if(id==='sleep'){
+    const bed=tile('bed object','🛏️',180,y+4), pawn=tile('actor','🧍',65,y), z=floatText('Z z z',260,y-52);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(130px)'}],{duration:1000,fill:'forwards'});
+    setTimeout(()=>pawn.textContent='😴',1100);
+    setTimeout(()=>anim(z,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(-4px)'},{opacity:0,transform:'translateY(-18px)'}],{duration:1800}),1300);
+  } else if(id==='eat'){
+    const pawn=tile('actor','🧍',80,y), table=tile('table object','🍽️',230,y+8), meal=tile('smallobj','🥘',246,y-10), yum=floatText('yum',280,y-48);
+    anim(pawn,[{transform:'translateX(0)'},{transform:'translateX(120px)'}],{duration:1000,fill:'forwards'});
+    setTimeout(()=>anim(meal,[{opacity:1},{opacity:0}],{duration:700,fill:'forwards'}),1300);
+    setTimeout(()=>anim(yum,[{opacity:0},{opacity:1},{opacity:0,transform:'translateY(-18px)'}],{duration:1200}),1450);
+  }
+}
+
+function render(){
+  if(!order.length) order = CARDS.map((_,i)=>i);
+  if(pos >= order.length) pos = 0;
+  const c = current();
+  $("counter").textContent = `${pos+1}/${order.length}`;
+  $("barFill").style.width = `${((pos+1)/order.length)*100}%`;
+  $("prompt").textContent = c.prompt;
+  $("word").textContent = c.word; $("meaning").textContent = c.meaning; $("example").textContent = c.example; $("zh").textContent = c.zh;
+  $("zh").classList.remove('show'); $("hintBtn").textContent = 'Show Chinese'; $("answer").classList.add('hidden');
+  const vals=Object.values(state.results), known=vals.filter(v=>v==='known').length, missed=vals.filter(v=>v==='missed').length;
+  $("score").textContent = `✓ ${known}　✕ ${missed}`;
+  $("stats").innerHTML = `<b>Progress</b><br>Known: ${known} / 20<br>Missed: ${missed} / 20<br>Unseen: ${20-known-missed} / 20<br><br><b>Current card</b><br>${c.word} is hidden until you tap <i>Show answer</i>.`;
+  playScene(c.id); save();
+}
+function next(){pos++; if(pos>=order.length) pos=0; render();}
+function mark(result){state.results[currentIndex()]=result; save(); next();}
+
+$("playBtn").addEventListener('click', ()=>playScene(current().id));
+$("showAnswerBtn").addEventListener('click', ()=>$("answer").classList.toggle('hidden'));
+$("speakBtn").addEventListener('click', ()=>{const c=current(); speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(`${c.word}. ${c.meaning}. ${c.example}`); u.lang='en-US'; u.rate=.9; speechSynthesis.speak(u);});
+$("hintBtn").addEventListener('click', ()=>{const z=$("zh"); z.classList.toggle('show'); $("hintBtn").textContent = z.classList.contains('show') ? 'Hide Chinese' : 'Show Chinese'; $("answer").classList.remove('hidden');});
+$("nextBtn").addEventListener('click', next); $("goodBtn").addEventListener('click', ()=>mark('known')); $("badBtn").addEventListener('click', ()=>mark('missed'));
+$("shuffleBtn").addEventListener('click', ()=>{order=CARDS.map((_,i)=>i); for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]];} pos=0; render();});
+$("missedBtn").addEventListener('click', ()=>{const missed=CARDS.map((_,i)=>i).filter(i=>state.results[i]==='missed'); if(!missed.length){alert('No missed cards yet.'); return;} order=missed; pos=0; render();});
+$("resetBtn").addEventListener('click', ()=>{if(confirm('Reset all progress?')){localStorage.removeItem(KEY); state={order:CARDS.map((_,i)=>i),results:{},pos:0}; order=state.order.slice(); pos=0; render();}});
+document.addEventListener('keydown', e=>{if(e.key.toLowerCase()==='p') playScene(current().id); if(e.key.toLowerCase()==='a') $("answer").classList.toggle('hidden'); if(e.key==='ArrowRight') mark('known'); if(e.key==='ArrowLeft') mark('missed');});
+window.addEventListener('load', ()=>{render(); if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');});
+</script>
+</body></html>
